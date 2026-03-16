@@ -694,52 +694,6 @@ section {
   margin-top: 48px;
 }
 
-.carousel {
-  display: flex;
-  gap: 24px;
-  width: max-content;
-  align-items: stretch;
-}
-
-.review-card {
-  min-width: 300px;
-  max-width: 300px;
-  background: white;
-  padding: 32px 28px;
-  border-radius: 20px;
-  border: 1px solid rgba(185, 143, 214, 0.18);
-  box-shadow: 0 4px 20px rgba(70, 40, 110, 0.06);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-  text-align: left;
-}
-
-.review-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 40px rgba(70, 40, 110, 0.12);
-}
-
-.review-card p {
-  font-size: 15px;
-  color: #555;
-  line-height: 1.7;
-  margin: 0;
-  font-style: italic;
-  font-family: "Poppins", sans-serif;
-  font-size: 17px;
-}
-
-.review-card h4 {
-  margin: 16px 0 0;
-  color: var(--accent-color, #662485);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  font-family: "Montserrat", system-ui;
-  font-style: normal;
-}
-
 /* ============================================================
    NAVBAR
    ============================================================ */
@@ -1959,6 +1913,44 @@ nav { margin: 0; }
 
 #contact-section p { color: rgba(255,255,255,0.75); }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+.carousel {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  align-items: center; /* cards size to their own content only */
+}
+
+.review-card {
+  min-width: 300px;
+  max-width: 300px;
+  height: auto;             /* natural height — no stretching, no clipping */
+  background: white;
+  padding: 32px 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(185, 143, 214, 0.18);
+  box-shadow: 0 4px 20px rgba(70, 40, 110, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.review-card p {
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  color: #555;
+  line-height: 1.7;
+  margin: 0;
+  font-style: italic;
+  /* no line-clamp — full quote always visible */
+}
+
+.review-card h4 {
+  margin: 14px 0 0;
+  color: var(--accent-color, #2fccd5);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  font-family: "Montserrat", system-ui;
+  font-style: normal;
+}
