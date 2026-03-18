@@ -421,9 +421,6 @@ section {
 
 /* Re-use countdown-title style from home page */
 #contact-section .countdown-title {
-  font-family: "Fredoka One", cursive;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-  font-weight: 700;
   color: white;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
   margin-bottom: 0;
