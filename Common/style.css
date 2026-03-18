@@ -1,18 +1,20 @@
-p {
-  font-family: "Montserrat";
-}
-
-h1 h2 h3 {
-  font-family: "Poppins";
-}
-
 :root {
-  --bg-color: #f2edf5;
-  --main-color: #46286e;
-  --accent-color: #662485;
-  --sec-accent-color: #b98fd6;
-  --tert-accent-color: #d7b6ea;
-  --text-color: #1f1f1f;
+  --bg-color: #f0fbfc;
+  --main-color: #1b3a66;
+  --accent-color: #2fccd5;
+  --sec-accent-color: #fdb813;
+  --tert-accent-color: #b4ebf5;
+  --support-peach: #efb19f;
+  --support-red: #fe3650;
+  --text-color: #1b3a66;
+  --purple-accent: #662485;
+  --purple-light: #d7b6ea;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
@@ -22,33 +24,54 @@ body {
   color: var(--text-color);
 }
 
+p {
+  font-family: "Montserrat", system-ui;
+}
+
 h1,
 h2,
 h3 {
   font-family: "Poppins", sans-serif;
+  color: var(--main-color);
 }
 
 section {
   width: 100%;
 }
 
+/* ============================================================
+   CONTACT SECTION  (shared across pages)
+   Navy bg — yellow underline, teal focus ring
+   ============================================================ */
+
 #contact-section {
   padding: 100px 20px;
-  /* continues the purple tone from reviews gradient */
   background:
     radial-gradient(
       ellipse 70% 80% at 50% 110%,
-      rgba(215, 182, 234, 0.2) 0%,
+      rgba(47, 204, 213, 0.1) 0%,
       transparent 65%
     ),
-    linear-gradient(160deg, var(--main-color) 0%, #2e1254 60%, #3a1a6a 100%);
+    linear-gradient(160deg, #1b3a66 0%, #112b50 60%, #0d2240 100%);
   color: white;
   text-align: center;
 }
 
-#contact-section .contact-title {
+#contact-section .contact-title,
+#contact-section .countdown-title {
   color: white;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+#contact-section .contact-title::after,
+#contact-section .countdown-title::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 4px;
+  background: var(--sec-accent-color);
+  border-radius: 2px;
+  margin: 10px auto 0;
 }
 
 .contact-container {
@@ -74,7 +97,7 @@ section {
 .contact-info p {
   font-size: 15px;
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.78);
   margin: 0 0 6px;
 }
 
@@ -88,8 +111,8 @@ section {
 .contact-form input,
 .contact-form textarea {
   padding: 13px 16px;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(180, 235, 245, 0.22);
+  background: rgba(255, 255, 255, 0.07);
   border-radius: 12px;
   font-family: "Montserrat", system-ui;
   font-size: 14px;
@@ -103,13 +126,13 @@ section {
 
 .contact-form input::placeholder,
 .contact-form textarea::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.42);
 }
 
 .contact-form input:focus,
 .contact-form textarea:focus {
-  border-color: var(--sec-accent-color);
-  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--accent-color);
+  background: rgba(47, 204, 213, 0.08);
 }
 
 .contact-form textarea {
@@ -117,50 +140,31 @@ section {
   resize: vertical;
 }
 
+/* Yellow submit button — on-brand for dark sections */
 .contact-form button {
   padding: 14px;
   border: none;
-  background: white;
-  color: var(--accent-color);
+  background: var(--sec-accent-color);
+  color: var(--main-color);
   border-radius: 12px;
   cursor: pointer;
   font-weight: 700;
   font-size: 15px;
   font-family: "Montserrat", system-ui;
   transition: all 0.25s;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(253, 184, 19, 0.3);
 }
 
 .contact-form button:hover {
-  background: var(--tert-accent-color);
+  background: white;
   color: var(--main-color);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
-.hero-btn.primary {
-  background: var(--accent-color);
-  color: white;
-  box-shadow: 0 4px 20px rgba(102, 36, 133, 0.4);
-}
-
-.hero-btn.idk {
-  background: var(--accent-color);
-  color: white;
-  box-shadow: 0 4px 20px rgba(102, 36, 133, 0.4);
-}
-
-.hero-btn.primary:hover {
-  background: var(--main-color);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 28px rgba(102, 36, 133, 0.5);
-}
-
-.hero-btn.idk:hover {
-  background: var(--main-color);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 28px rgba(102, 36, 133, 0.5);
-}
+/* ============================================================
+   SHARED BUTTONS
+   ============================================================ */
 
 .hero-btn {
   padding: 14px 32px;
@@ -170,30 +174,67 @@ section {
   font-size: 15px;
   transition: all 0.25s;
   letter-spacing: 0.3px;
+  display: inline-block;
 }
 
+/* Primary — teal */
+.hero-btn.primary,
+.hero-btn.idk {
+  background: var(--accent-color);
+  color: white;
+  box-shadow: 0 4px 20px rgba(47, 204, 213, 0.4);
+}
+
+.hero-btn.primary:hover,
+.hero-btn.idk:hover {
+  background: var(--main-color);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(27, 58, 102, 0.3);
+}
+
+/* Secondary — outlined navy */
+.hero-btn.secondary {
+  background: transparent;
+  color: var(--main-color);
+  border: 2px solid var(--main-color);
+}
+
+.hero-btn.secondary:hover {
+  background: var(--main-color);
+  color: white;
+  transform: translateY(-3px);
+}
+
+/* ============================================================
+   SCHOOL LOGO BADGE (fixed bottom-right)
+   ============================================================ */
+
 .school-logo-badge {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: 12px;
-    padding: 8px 14px;
-    box-shadow: 0 2px 8px rgba(27, 58, 102, 0.12), 0 8px 24px rgba(27, 58, 102, 0.10);
-    border: 1px solid rgba(180, 235, 245, 0.50);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 12px;
+  padding: 8px 14px;
+  box-shadow:
+    0 2px 8px rgba(27, 58, 102, 0.12),
+    0 8px 24px rgba(27, 58, 102, 0.1);
+  border: 1px solid rgba(180, 235, 245, 0.5);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .school-logo-badge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(47, 204, 213, 0.20);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(47, 204, 213, 0.2);
 }
 
 .school-logo-badge img {
-    height: 36px;
-    width: auto;
-    display: block;
+  height: 36px;
+  width: auto;
+  display: block;
 }
