@@ -1,7 +1,7 @@
 // UPDATES
 let TRACK;
-const LEFT_BTN_SELECTOR = '.nav-btn.left';
-const RIGHT_BTN_SELECTOR = '.nav-btn.right';
+const LEFT_BTN_SELECTOR = ".nav-btn.left";
+const RIGHT_BTN_SELECTOR = ".nav-btn.right";
 
 let LEFT_BTN, RIGHT_BTN;
 let updates = [];
@@ -9,21 +9,73 @@ let activeIndex = 0;
 
 const GAP = 20;
 
+const WALK_IMAGES = ["pink", "blue", "green", "orange", "yellow"];
+const ALL_IMAGE = "all";
+
+const ALL_TIMES = [
+  {h: 21, m: 30},
+  {h: 0, m: 0},
+  {h: 4, m: 0},
+];
+
+const EVENT_START = new Date("2026-04-02T19:30:00").getTime();
+
+function getCurrentWalkImage() {
+  const now = new Date();
+  const h = now.getHours();
+  const m = now.getMinutes();
+
+  for (const t of ALL_TIMES) {
+    if (h === t.h && m >= t.m && m < t.m + 30) return ALL_IMAGE;
+  }
+
+  const msSinceStart = Date.now() - EVENT_START;
+  if (msSinceStart < 0) return WALK_IMAGES[0];
+
+  const slotsSinceStart = Math.floor(msSinceStart / (30 * 60 * 1000));
+  return WALK_IMAGES[slotsSinceStart % WALK_IMAGES.length];
+}
+
+function updateWalkImage() {
+  const img = document.querySelector(".who_walks image, .who_walks img");
+  if (!img) return;
+  const name = getCurrentWalkImage();
+  img.src = `images/${name}.png`;
+  img.alt = `Walking: ${name}`;
+}
+
+function scheduleWalkUpdate() {
+  const now = new Date();
+  const msUntilNextSlot =
+    (30 - (now.getMinutes() % 30)) * 60000 -
+    now.getSeconds() * 1000 -
+    now.getMilliseconds();
+  setTimeout(() => {
+    updateWalkImage();
+    setInterval(updateWalkImage, 30 * 60 * 1000);
+  }, msUntilNextSlot);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  updateWalkImage();
+  scheduleWalkUpdate();
+});
+
 async function init() {
-  TRACK = document.getElementById('updates-track');
+  TRACK = document.getElementById("updates-track");
   LEFT_BTN = document.querySelector(LEFT_BTN_SELECTOR);
   RIGHT_BTN = document.querySelector(RIGHT_BTN_SELECTOR);
 
   if (!TRACK) {
-    console.error('updates-track element not found.');
+    console.error("updates-track element not found.");
     return;
   }
   if (!LEFT_BTN || !RIGHT_BTN) {
-    console.error('Navigation buttons not found.');
+    console.error("Navigation buttons not found.");
     return;
   }
 
-  const resp = await fetch('updates.json');
+  const resp = await fetch("updates.json");
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   updates = await resp.json();
 
@@ -35,84 +87,79 @@ async function init() {
 
   // Review section
   // REVIEW AUTO SCROLLER
-function initReviewScroller() {
+  function initReviewScroller() {
+    const containers = document.querySelectorAll(".lazy-scrolling-container");
 
-  const containers = document.querySelectorAll(".lazy-scrolling-container");
+    containers.forEach((container) => {
+      const carousel = container.querySelector(".carousel");
+      if (!carousel) return;
 
-  containers.forEach(container => {
+      // duplicate items for infinite scroll
+      carousel.innerHTML += carousel.innerHTML;
 
-    const carousel = container.querySelector(".carousel");
-    if (!carousel) return;
+      const halfWidth = carousel.scrollWidth / 2;
+      const direction = container.classList.contains("left") ? -1 : 1;
+      const speed = 0.7;
 
-    // duplicate items for infinite scroll
-    carousel.innerHTML += carousel.innerHTML;
-
-    const halfWidth = carousel.scrollWidth / 2;
-    const direction = container.classList.contains("left") ? -1 : 1;
-    const speed = 0.7;
-
-    if (direction === -1) {
-      container.scrollLeft = halfWidth;
-    }
-
-    function animate() {
-
-      container.scrollLeft += speed * direction;
-
-      if (direction === 1 && container.scrollLeft >= halfWidth) {
-        container.scrollLeft = 0;
-      }
-
-      if (direction === -1 && container.scrollLeft <= 0) {
+      if (direction === -1) {
         container.scrollLeft = halfWidth;
       }
 
-      requestAnimationFrame(animate);
-    }
+      function animate() {
+        container.scrollLeft += speed * direction;
 
-    animate();
+        if (direction === 1 && container.scrollLeft >= halfWidth) {
+          container.scrollLeft = 0;
+        }
 
-  });
+        if (direction === -1 && container.scrollLeft <= 0) {
+          container.scrollLeft = halfWidth;
+        }
 
-}
+        requestAnimationFrame(animate);
+      }
 
-initReviewScroller();
+      animate();
+    });
+  }
+
+  initReviewScroller();
 }
 
 function renderCards() {
-  TRACK.innerHTML = '';
+  TRACK.innerHTML = "";
   updates.forEach((u, i) => {
-    const card = document.createElement('article');
+    const card = document.createElement("article");
     const importance = u.importance;
-    let colorClass = '';
+    let colorClass = "";
 
-    if (importance === 1) colorClass = 'importance-1';
-    else if (importance === 2) colorClass = 'importance-2';
-    else if (importance === 3) colorClass = 'importance-3';
+    if (importance === 1) colorClass = "importance-1";
+    else if (importance === 2) colorClass = "importance-2";
+    else if (importance === 3) colorClass = "importance-3";
 
     card.className = `update-card ${colorClass}`;
-    card.setAttribute('role', 'listitem');
+    card.setAttribute("role", "listitem");
     card.dataset.index = i;
 
-    const imgDiv = document.createElement('div');
-    imgDiv.className = 'thumb';
+    const imgDiv = document.createElement("div");
+    imgDiv.className = "thumb";
 
-    const img = document.createElement('img');
+    const img = document.createElement("img");
     img.src = u.image;
     img.alt = u.title || `Update ${i + 1}`;
-    img.loading = 'lazy';
+    img.loading = "lazy";
     imgDiv.appendChild(img);
 
-    const meta = document.createElement('div');
-    meta.className = 'meta';
+    const meta = document.createElement("div");
+    meta.className = "meta";
 
-    const h3 = document.createElement('h3');
+    const h3 = document.createElement("h3");
     h3.textContent = u.title;
 
-    const p = document.createElement('p');
+    const p = document.createElement("p");
     p.textContent = u.description;
 
-    const time = document.createElement('time');
+    const time = document.createElement("time");
     time.textContent = new Date(u.date).toLocaleDateString();
 
     meta.appendChild(h3);
@@ -124,46 +171,44 @@ function renderCards() {
 
     TRACK.appendChild(card);
 
-    img.addEventListener('error', () => {
-      imgDiv.style.backgroundColor = 'rgba(255,255,255,0.02)';
+    img.addEventListener("error", () => {
+      imgDiv.style.backgroundColor = "rgba(255,255,255,0.02)";
       img.remove();
     });
   });
 
   requestAnimationFrame(() => {
-    TRACK.style.paddingLeft = '0px';
-    TRACK.style.paddingRight = '0px';
+    TRACK.style.paddingLeft = "0px";
+    TRACK.style.paddingRight = "0px";
     setCenterClass();
   });
 }
 
 function cardDimensions() {
-  const card = TRACK.querySelector('.update-card');
-  if (!card) return { w: 320, gap: GAP };
+  const card = TRACK.querySelector(".update-card");
+  if (!card) return {w: 320, gap: GAP};
   const w = Math.round(card.getBoundingClientRect().width);
   const gap = GAP;
-  return { w, gap };
+  return {w, gap};
 }
 
 function updatePosition(animate = true) {
-  const { w, gap } = cardDimensions();
+  const {w, gap} = cardDimensions();
   const step = w + gap;
 
-  const mask = TRACK.closest('.updates-mask');
+  const mask = TRACK.closest(".updates-mask");
   if (!mask) return;
 
   const maskWidth = mask.getBoundingClientRect().width;
   const centerX = maskWidth / 2;
 
-  const translateX = Math.round(
-    centerX - w / 2 - activeIndex * step
-  );
+  const translateX = Math.round(centerX - w / 2 - activeIndex * step);
 
   if (!animate) {
-    TRACK.style.transition = 'none';
+    TRACK.style.transition = "none";
     TRACK.style.transform = `translateX(${translateX}px)`;
     void TRACK.offsetWidth;
-    TRACK.style.transition = '';
+    TRACK.style.transition = "";
   } else {
     TRACK.style.transform = `translateX(${translateX}px)`;
   }
@@ -172,25 +217,25 @@ function updatePosition(animate = true) {
 }
 
 function setCenterClass() {
-  const cards = Array.from(TRACK.querySelectorAll('.update-card'));
-  cards.forEach(c => c.classList.remove('center'));
+  const cards = Array.from(TRACK.querySelectorAll(".update-card"));
+  cards.forEach((c) => c.classList.remove("center"));
 
   const centerCard = TRACK.querySelector(
-    `.update-card[data-index="${activeIndex}"]`
+    `.update-card[data-index="${activeIndex}"]`,
   );
 
-  if (centerCard) centerCard.classList.add('center');
+  if (centerCard) centerCard.classList.add("center");
 }
 
 function attachListeners() {
-  LEFT_BTN.addEventListener('click', () => {
+  LEFT_BTN.addEventListener("click", () => {
     if (activeIndex > 0) {
       activeIndex -= 1;
       updatePosition(true);
     }
   });
 
-  RIGHT_BTN.addEventListener('click', () => {
+  RIGHT_BTN.addEventListener("click", () => {
     if (activeIndex < updates.length - 1) {
       activeIndex += 1;
       updatePosition(true);
@@ -199,9 +244,9 @@ function attachListeners() {
 
   setupDrag();
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowLeft') LEFT_BTN.click();
-    if (e.key === 'ArrowRight') RIGHT_BTN.click();
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") LEFT_BTN.click();
+    if (e.key === "ArrowRight") RIGHT_BTN.click();
   });
 }
 
@@ -211,11 +256,11 @@ function setupDrag() {
   let startTranslate = 0;
   const mask = TRACK.parentElement;
 
-  mask.addEventListener('pointerdown', e => {
+  mask.addEventListener("pointerdown", (e) => {
     dragging = true;
     startX = e.clientX;
 
-    TRACK.style.transition = 'none';
+    TRACK.style.transition = "none";
 
     const style = window.getComputedStyle(TRACK);
     const matrix = new DOMMatrixReadOnly(style.transform);
@@ -224,48 +269,56 @@ function setupDrag() {
     mask.setPointerCapture?.(e.pointerId);
   });
 
-  mask.addEventListener('pointermove', e => {
+  mask.addEventListener("pointermove", (e) => {
     if (!dragging) return;
     const dx = e.clientX - startX;
     TRACK.style.transform = `translateX(${Math.round(startTranslate + dx)}px)`;
   });
 
-  mask.addEventListener('pointerup', e => {
+  mask.addEventListener("pointerup", (e) => {
     if (!dragging) return;
     dragging = false;
 
-    TRACK.style.transition = '';
+    TRACK.style.transition = "";
 
     const dx = e.clientX - startX;
-    const { w, gap } = cardDimensions();
+    const {w, gap} = cardDimensions();
     const step = w + gap;
 
     const deltaIndex = Math.round(-dx / step);
     activeIndex = Math.max(
       0,
-      Math.min(updates.length - 1, activeIndex + deltaIndex)
+      Math.min(updates.length - 1, activeIndex + deltaIndex),
     );
 
     updatePosition(true);
   });
 
-  mask.addEventListener('pointercancel', () => {
+  mask.addEventListener("pointercancel", () => {
     dragging = false;
     updatePosition(true);
   });
 }
 
-window.addEventListener('resize', () => updatePosition(false));
+window.addEventListener("resize", () => updatePosition(false));
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
 } else {
   init();
 }
 
-
 // CONFETTI FOR COUNTDOWN
-const Colours = ["#f74667","#fcd846","#52eca9","#49b1fb","#9c51f8","#f94fb5","#48f9e2","#eed740"];
+const Colours = [
+  "#f74667",
+  "#fcd846",
+  "#52eca9",
+  "#49b1fb",
+  "#9c51f8",
+  "#f94fb5",
+  "#48f9e2",
+  "#eed740",
+];
 
 function CreateConfetti() {
   const durationMs = 20000;
@@ -294,7 +347,14 @@ function CreateConfetti() {
     height = window.innerHeight;
     canvas.width = Math.floor(width * window.devicePixelRatio);
     canvas.height = Math.floor(height * window.devicePixelRatio);
-    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    ctx.setTransform(
+      window.devicePixelRatio,
+      0,
+      0,
+      window.devicePixelRatio,
+      0,
+      0,
+    );
   };
 
   resize();
@@ -319,7 +379,10 @@ function CreateConfetti() {
     const vy = Math.sin(angle) * speed - Math.random() * 2.4;
 
     return {
-      x,y,vx,vy,
+      x,
+      y,
+      vx,
+      vy,
       size: 6 + Math.random() * 6,
       rotation: Math.random() * Math.PI,
       rotationSpeed: (Math.random() - 0.5) * 0.2,
@@ -330,7 +393,7 @@ function CreateConfetti() {
       burstMs: 600 + Math.random() * 600,
       driftX: (Math.random() - 0.5) * 0.35,
       driftY: 0.08 + Math.random() * 0.18,
-      wobble: Math.random() * Math.PI * 2
+      wobble: Math.random() * Math.PI * 2,
     };
   };
 
@@ -378,7 +441,7 @@ function CreateConfetti() {
       }
 
       ctx.save();
-      const sway = Math.sin((p.age / 180) + p.wobble) * 0.6;
+      const sway = Math.sin(p.age / 180 + p.wobble) * 0.6;
       ctx.translate(p.x + sway, p.y);
       ctx.rotate(p.rotation);
       ctx.globalAlpha = Math.max(p.life, 0.15);
@@ -405,12 +468,9 @@ function CreateConfetti() {
 
 window.CreateConfetti = CreateConfetti;
 
-
-
 // COUNTDOWN
 document.addEventListener("DOMContentLoaded", () => {
-
-  const targetDate = new Date("2026-04-02T17:00:00").getTime();
+  const targetDate = new Date("2026-04-02T19:30:00").getTime();
   let lastValues = {};
   let liveTriggeredTime = null;
 
@@ -449,12 +509,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const countdownEl = document.getElementById("countdown");
 
-  if (diff <= 86400000) {
-    countdownEl?.classList.add("final-glow");
-  } else {
-    countdownEl?.classList.remove("final-glow");
-  }
-
+    if (diff <= 86400000) {
+      countdownEl?.classList.add("final-glow");
+    } else {
+      countdownEl?.classList.remove("final-glow");
+    }
   }
 
   function SetValue(id, value) {
@@ -477,8 +536,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!section) return;
 
     const countdownEl = document.getElementById("countdown");
+    const Image = document.getElementByIdById("walking_image");
     if (countdownEl) {
       countdownEl.classList.add("countdown-fade-out");
+      setTimeout(() => (countdownEl.style.display = "none"), 700);
+      setTimeout(() => ((Image.style.display = "block"), 700));
     }
 
     setTimeout(() => {
@@ -490,23 +552,23 @@ document.addEventListener("DOMContentLoaded", () => {
           <a class="live-login-btn" href="MyTeam/dashboard.html">Go to Login</a>
         </div>
       `;
-      const liveEl = section.querySelector('.live-container');
+      const liveEl = section.querySelector(".live-container");
       if (liveEl) {
         setTimeout(() => {
-          liveEl.classList.add('live-fade-in');
+          liveEl.classList.add("live-fade-in");
         }, 50);
       }
-    }, 700); 
+    }, 700);
   }
 
   function showEndedState() {
     const section = document.getElementById("countdown-section");
     if (!section) return;
 
-    const liveEl = section.querySelector('.live-container');
+    const liveEl = section.querySelector(".live-container");
     if (liveEl) {
-      liveEl.classList.remove('live-fade-in');
-      liveEl.classList.add('countdown-fade-out');
+      liveEl.classList.remove("live-fade-in");
+      liveEl.classList.add("countdown-fade-out");
     }
 
     setTimeout(() => {
@@ -516,10 +578,10 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>Thanks for participating in Oakridge Codefest 2026!</p>
         </div>
       `;
-      const endedEl = section.querySelector('.ended-container');
+      const endedEl = section.querySelector(".ended-container");
       if (endedEl) {
         setTimeout(() => {
-          endedEl.classList.add('live-fade-in');
+          endedEl.classList.add("live-fade-in");
         }, 50);
       }
     }, 700);
@@ -529,24 +591,25 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(UpdateCountdown, 1000);
 });
 
+document
+  .getElementById("contact-form")
+  .addEventListener("submit", function (e) {
+    e.preventDefault();
 
-document.getElementById('contact-form').addEventListener('submit', function (e) {
-  e.preventDefault();
+    const name = document.getElementById("contact-name").value.trim();
+    const email = document.getElementById("contact-email").value.trim();
+    const message = document.getElementById("contact-message").value.trim();
 
-  const name    = document.getElementById('contact-name').value.trim();
-  const email   = document.getElementById('contact-email').value.trim();
-  const message = document.getElementById('contact-message').value.trim();
+    if (!name || !email || !message) {
+      alert("Please fill in all fields before sending.");
+      return;
+    }
 
-  if (!name || !email || !message) {
-    alert('Please fill in all fields before sending.');
-    return;
-  }
+    const to = "tanushree.tyagi@oakridge.in";
+    const subject = encodeURIComponent(`RFL Message from ${name}`);
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+    );
 
-  const to      = 'tanushree.tyagi@oakridge.in';
-  const subject = encodeURIComponent(`RFL Message from ${name}`);
-  const body    = encodeURIComponent(
-    `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
-  );
-
-  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-});
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+  });
