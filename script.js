@@ -26,13 +26,13 @@ function getCurrentWalkImage() {
   const m = now.getMinutes();
 
   for (const t of ALL_TIMES) {
-    if (h === t.h && m >= t.m && m < t.m + 30) return ALL_IMAGE;
+    if (h === t.h && m >= t.m && m < t.m + 20) return ALL_IMAGE;
   }
 
   const msSinceStart = Date.now() - EVENT_START;
   if (msSinceStart < 0) return WALK_IMAGES[0];
 
-  const slotsSinceStart = Math.floor(msSinceStart / (30 * 60 * 1000));
+  const slotsSinceStart = Math.floor(msSinceStart / (20 * 60 * 1000));
   return WALK_IMAGES[slotsSinceStart % WALK_IMAGES.length];
 }
 
@@ -45,15 +45,10 @@ function updateWalkImage() {
 }
 
 function scheduleWalkUpdate() {
-  const now = new Date();
-  const msUntilNextSlot =
-    (30 - (now.getMinutes() % 30)) * 60000 -
-    now.getSeconds() * 1000 -
-    now.getMilliseconds();
   setTimeout(() => {
     updateWalkImage();
-    setInterval(updateWalkImage, 30 * 60 * 1000);
-  }, msUntilNextSlot);
+    setInterval(updateWalkImage, 20 * 60 * 1000);
+  }, 60 * 1000);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -536,7 +531,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!section) return;
 
     const countdownEl = document.getElementById("countdown");
-    const Image = document.getElementByIdById("walking_image");
+    const Image = document.getElementById("walking_image");
     if (countdownEl) {
       countdownEl.classList.add("countdown-fade-out");
       setTimeout(() => (countdownEl.style.display = "none"), 700);
@@ -545,13 +540,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(() => {
       CreateConfetti();
-      section.innerHTML = `
-        <div class="live-container">
-          <h1>OAKRIDGE CODEFEST 2026 IS LIVE!</h1>
-          <p>Let The Hacking Begin!</p>
-          <a class="live-login-btn" href="MyTeam/dashboard.html">Go to Login</a>
-        </div>
-      `;
       const liveEl = section.querySelector(".live-container");
       if (liveEl) {
         setTimeout(() => {
