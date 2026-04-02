@@ -39,16 +39,21 @@ function getCurrentWalkImage() {
 function updateWalkImage() {
   const img = document.querySelector(".who_walks image, .who_walks img");
   if (!img) return;
+
   const name = getCurrentWalkImage();
-  img.src = `images/${name}.png`;
-  img.alt = `Walking: ${name}`;
+
+  // Only update the DOM if the image name has actually changed
+  if (img.getAttribute("data-last-image") !== name) {
+    // ?v= forces the browser to bypass cache and show the update immediately
+    img.src = `images/${name}.png?v=${Date.now()}`;
+    img.alt = `Walking: ${name}`;
+    img.setAttribute("data-last-image", name);
+  }
 }
 
 function scheduleWalkUpdate() {
-  setTimeout(() => {
-    updateWalkImage();
-    setInterval(updateWalkImage, 20 * 60 * 1000);
-  }, 60 * 1000);
+  // Check every 1 second so it syncs exactly when the minute changes
+  setInterval(updateWalkImage, 1000);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -80,8 +85,6 @@ async function init() {
   requestAnimationFrame(() => updatePosition(0));
   attachListeners();
 
-  // Review section
-  // REVIEW AUTO SCROLLER
   function initReviewScroller() {
     const containers = document.querySelectorAll(".lazy-scrolling-container");
 
@@ -89,7 +92,6 @@ async function init() {
       const carousel = container.querySelector(".carousel");
       if (!carousel) return;
 
-      // duplicate items for infinite scroll
       carousel.innerHTML += carousel.innerHTML;
 
       const halfWidth = carousel.scrollWidth / 2;
