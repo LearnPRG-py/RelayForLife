@@ -11,7 +11,11 @@
   padding: 64px;
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
 .primary-heading-text {
@@ -35,8 +39,8 @@
 .resource-card {
   background: linear-gradient(
     180deg,
-    rgba(255,255,255,0.025),
-    rgba(255,255,255,0.01)
+    rgba(255, 255, 255, 0.025),
+    rgba(255, 255, 255, 0.01)
   );
   border-left: 6px solid var(--sec-accent-color);
   border-radius: 8px;
@@ -48,7 +52,6 @@
   position: relative;
   color: white;
 }
-
 
 .resource-title {
   font-size: 26px;
@@ -86,48 +89,64 @@
   text-transform: uppercase;
   text-decoration: none;
   color: var(--text-color);
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border-left: 4px solid var(--accent-color);
   border-radius: 4px;
-  transition: background 160ms ease, transform 160ms ease;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
 }
 
 .resource-link:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   transform: translateX(4px);
 }
 
 .buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    align-items: center;
-    justify-content: center;
-    margin: 20px auto;
-    flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  flex-wrap: wrap;
 }
 
 .button {
-    display: block;
-    padding: 18px 30px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    border: none;
-    border-radius: 50px;
-    text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 6px 15px var(--box-shadow-dark);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    min-width: 200px;
-    text-align: center;
-    border: 3px solid var(--sec-accent-color);
+  display: block;
+  padding: 18px 30px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 50px;
+  text-decoration: none;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+  box-shadow: 0 6px 15px var(--box-shadow-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 200px;
+  text-align: center;
+  border: 3px solid var(--sec-accent-color);
 }
 
 .button:hover {
-    transform: translateY(-3px);
-    border: 3px solid var(--accent-color);
+  transform: translateY(-3px);
+  border: 3px solid var(--accent-color);
 }
 
+.images {
+  display: block;
+  text-align: center;
+}
+
+.images img {
+  max-width: 50%;
+  display: block;
+  margin: 0 auto 1rem auto;
+  border-radius: 3rem;
+  padding-bottom: 0;
+}
